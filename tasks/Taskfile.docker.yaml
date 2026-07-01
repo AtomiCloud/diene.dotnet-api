@@ -1,0 +1,25 @@
+version: '3'
+vars:
+  IMAGE: diene-dotnet-base:local
+tasks:
+  build:
+    desc: 'Build the image locally (optional tag suffix via --, e.g. -- 1 -> :local-1)'
+    cmds:
+      - docker build -f infra/Dockerfile -t {{.IMAGE}}{{if .CLI_ARGS}}-{{.CLI_ARGS}}{{end}} .
+  prep:
+    desc: 'Validate the base Docker build context (build smoke, no push)'
+    cmds:
+      - docker build -f infra/Dockerfile -t {{.IMAGE}}-prep .
+  run:
+    desc: 'Run the built image (optional tag suffix via --)'
+    cmds:
+      - docker run --rm {{.IMAGE}}{{if .CLI_ARGS}}-{{.CLI_ARGS}}{{end}}
+  dev:
+    desc: 'Build then run the image (optional tag suffix via --)'
+    cmds:
+      - task: build
+      - task: run
+  clean:
+    desc: 'Remove the locally built image (optional tag suffix via --)'
+    cmds:
+      - docker image rm {{.IMAGE}}{{if .CLI_ARGS}}-{{.CLI_ARGS}}{{end}} || true

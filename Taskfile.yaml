@@ -1,0 +1,23 @@
+version: '3'
+includes:
+  docker: tasks/Taskfile.docker.yaml
+  secret: tasks/Taskfile.secret.yaml
+  test: tasks/Taskfile.test.yaml
+tasks:
+  setup:
+    desc: Setup the repository
+    cmds:
+      - ./scripts/local/setup.sh
+      - ./scripts/local/secrets.sh
+  build:
+    desc: Build the .NET solution (Release)
+    cmds:
+      - dotnet build dotnet-base.slnx -c Release
+  lint:
+    desc: Lints the whole code-base
+    cmds:
+      - pre-commit run --all-files
+  dead-code:
+    desc: Inspect for dead code
+    cmds:
+      - ./scripts/local/dotnet-dead-code.sh

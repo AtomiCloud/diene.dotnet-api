@@ -1,0 +1,16 @@
+coverage:
+  unit:
+    project: UnitTest/UnitTest.csproj
+    minimum: 100
+    include:
+      - '[Lib]*'
+    exclude:
+      - '[*]*.Program'
+  int:
+    project: IntTest/IntTest.csproj
+    minimum: 80
+    include:
+      - '[App]*'
+    exclude:
+      - '[*]*.Program'
+      - '[Lib]*'

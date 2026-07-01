@@ -1,0 +1,26 @@
+version: '3'
+tasks:
+  unit:
+    desc: Run unit tests
+    cmds:
+      - ./scripts/local/dotnet-test.sh unit
+  unit:dev:
+    desc: Run unit tests in watch mode
+    cmds:
+      - ./scripts/local/dotnet-test.sh unit --watch
+  unit:coverage:
+    desc: Run unit tests with full coverage (enforces the unit threshold)
+    cmds:
+      - ./scripts/local/dotnet-test.sh unit --coverage
+  int:
+    desc: Run integration tests
+    cmds:
+      - ./scripts/local/dotnet-test.sh int
+  int:dev:
+    desc: Run integration tests in watch mode
+    cmds:
+      - ./scripts/local/dotnet-test.sh int --watch
+  int:coverage:
+    desc: Run integration tests with full coverage (enforces the integration threshold)
+    cmds:
+      - ./scripts/local/dotnet-test.sh int --coverage

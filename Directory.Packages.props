@@ -1,0 +1,27 @@
+<Project>
+
+  <!-- Central Package Management: every version is pinned here so all projects stay in lockstep. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <!-- Application / library runtime dependencies. -->
+  <ItemGroup>
+    <PackageVersion Include="StackExchange.Redis" Version="3.0.11" />
+  </ItemGroup>
+
+  <!-- Test stack: xUnit + FluentAssertions + Testcontainers. -->
+  <ItemGroup>
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
+    <!-- Pinned to 7.x: v8 switched to a paid commercial license; 7.x stays Apache-2.0. -->
+    <PackageVersion Include="FluentAssertions" Version="7.2.2" />
+    <!-- 2.4.1 is the last VSTest-only release; 3.x requires Microsoft.Testing.Platform v2,
+         which conflicts with xunit.v3's pinned MTP v1. -->
+    <PackageVersion Include="GitHubActionsTestLogger" Version="2.4.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
+    <PackageVersion Include="Testcontainers.Redis" Version="4.12.0" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+  </ItemGroup>
+
+</Project>

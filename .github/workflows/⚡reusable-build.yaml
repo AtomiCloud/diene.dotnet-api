@@ -1,0 +1,15 @@
+name: ⚡ Reusable Build
+on:
+  workflow_call:
+jobs:
+  build:
+    name: Build Validation
+    runs-on:
+      - nscloud-ubuntu-22.04-amd64-4x8-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-atomi-nix-store-cache
+    steps:
+      - uses: AtomiCloud/actions.setup-nix@v3
+      - uses: AtomiCloud/actions.cache-nuget@v1
+      - name: Build solution
+        run: nix develop .#ci -c ./scripts/ci/build.sh

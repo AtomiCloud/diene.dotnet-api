@@ -1,0 +1,21 @@
+name: CD
+on:
+  push:
+    tags:
+      - v*.*.*
+      - v*.*.*
+jobs:
+  placeholder:
+    name: Placeholder CD
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder Step
+        run: echo "Placeholder step ${{ github.ref_name }}"
+  docker:
+    name: Docker Image
+    uses: ./.github/workflows/⚡reusable-docker.yaml
+    secrets: inherit
+    with:
+      image_name: diene-dotnet-base
+      dockerfile: ./infra/Dockerfile
+      version: ${{ github.ref_name }}

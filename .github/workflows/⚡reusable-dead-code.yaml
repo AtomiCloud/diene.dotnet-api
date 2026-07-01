@@ -1,0 +1,15 @@
+name: ⚡ Reusable Dead Code
+on:
+  workflow_call:
+jobs:
+  dead-code:
+    name: Dead Code
+    runs-on:
+      - nscloud-ubuntu-22.04-amd64-4x8-with-cache
+      - nscloud-cache-size-50gb
+      - nscloud-cache-tag-atomi-nix-store-cache
+    steps:
+      - uses: AtomiCloud/actions.setup-nix@v3
+      - uses: AtomiCloud/actions.cache-nuget@v1
+      - name: Run dead-code inspection
+        run: nix develop .#ci -c ./scripts/ci/dead-code.sh
