@@ -58,12 +58,15 @@
 ### 3.3 Cross-cutting service concerns
 
 - **Typed, validated config**: `App/Config/settings.yaml` (+ landscape
-  overrides), typed options, validate-on-start.
+  overrides), typed options, validate-on-start; optionally emit a settings
+  `schema.json` (alcohol's `GenerateConfig` mode) for IDE validation.
 - **Error pipeline**: `App/Error/` domain problems + `IExceptionHandler` +
   `AddProblemDetails()` → RFC-7807 responses.
 - **Health/readiness**: `/health` (+ liveness/readiness tags) via built-in
   health checks; **OpenAPI** document endpoint.
 - **Validation**: FluentValidation wired via endpoint filters.
+- **Edge concerns**: CORS as typed config (alcohol's `DefaultCors` shape) and
+  forwarded-headers middleware — the pod always sits behind ingress.
 
 ### 3.4 Observability
 
@@ -92,17 +95,39 @@
 
 - Mirror how bun-cli added deploy over bun-base, but with a **real chart**:
   - `infra/root_chart/` with Deployment, Service, liveness/readiness probes,
-    HPA, and configmap-mounted settings (+ per-landscape values).
+    HPA, configmap-mounted settings, and termination grace aligned with
+    ASP.NET's shutdown timeout.
+  - Per-landscape values as files: `values.yaml` + `values.<landscape>.yaml`
+    per target landscape (alcohol's convention).
+  - **Secrets path**: configmap is for non-sensitive settings only; sensitive
+    values reach the pod via the external-secrets/Infisical pattern (alcohol's
+    `bromine` subchart + `ExternalSecret` template) — wire it, or explicitly
+    document it as the extension point. Decide during implementation.
   - `tasks/Taskfile.helm.yaml`, `scripts/ci/helm.sh` (stamps `appVersion` to
     match the image, OCI push).
   - `.github/workflows/⚡reusable-helm.yaml` + a **helm job** in both `ci.yaml`
     (lint/template) and `cd.yaml` (publish on `v*.*.*`).
+  - **Boundary**: publishing image + chart to the OCI registry is where this
+    sample stops; actual cluster deploy (ArgoCD) is downstream, not built here.
 
 ### 3.8 Docs
 
 - `docs/developer/dotnet-api-baseline.md` (parallel to bun's `bun-baseline.md`):
   new `pls` tasks, run modes, and the **promotion knobs** a downstream adapts
   (see §5).
+- **Local dev run**: a `pls`-level run/dev task (Kestrel directly, no docker)
+  with the landscape/environment env vars documented in the baseline doc.
+
+### 3.9 Identity & naming (decide once, up front)
+
+- **Artifact-visible identity must be real**: image name (`diene-dotnet-api`),
+  chart/service name, and the OpenAPI title are what operators and consumers
+  see — give them this repo's identity.
+- **Repo-internal scaffold names stay base-named** to keep the 3wm surface
+  minimal: `dotnet-base.slnx`, `.config/dotnet-base.test.yaml`, workflow
+  files, and `RootNamespace AtomiCloud.DotnetBase.*` are renamed only if an
+  artifact forces it.
+- README title/badges: rewritten to this repo — small, isolated edits.
 
 ## 4. Newest-practice upgrades (alcohol.zinc is .NET 8)
 
@@ -149,9 +174,21 @@
   Management, .NET 10 target, xUnit v3 + FluentAssertions 7 + Testcontainers,
   coverage config, CI with docker job, `cd.yaml` docker job, semantic-release.
 
-## 7. Out of scope
+## 7. Out of scope / documented extension points
 
 - Publishing as a NuGet library — that's `dotnet-lib`.
+- Typed outbound `HttpClient` factory config (alcohol's `HttpClientOption`
+  pattern) — the sample has no outbound HTTP; document as an extension point.
+
+## 8. Definition of done ("proven working")
+
+- On a `v*.*.*` tag, CI publishes **both artifacts** end-to-end: the container
+  image to ghcr.io and the chart (with matching `appVersion`) to the OCI
+  registry — no manual steps.
+- The published image runs locally (`pls docker:run`-style) and answers
+  `/health`; the `WebApplicationFactory` endpoint tests are green in CI.
+- `helm lint`/`template` pass in CI on every push.
+- `main` still merges cleanly from upstream `dotnet-base` (the 3wm check).
 - A full multi-module business domain, real auth provider, email/storage
   integrations — the sample proves the _shape_ with one module; these are
   documented extension points, not built out.
