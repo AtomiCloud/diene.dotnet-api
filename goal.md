@@ -40,6 +40,7 @@
 ## 3. High-level goals
 
 ### 3.1 Convert the host: console → web
+
 - `App/App.csproj` → `Sdk="Microsoft.NET.Sdk.Web"`, drop `OutputType=Exe`.
 - Replace `App/Program.cs` console flow with a **thin bootstrap** + a
   composition root (`App/StartUp/Server.cs`) using layered service registration
@@ -47,6 +48,7 @@
   each a small extension method.
 
 ### 3.2 Endpoints (one sample module)
+
 - One feature module reusing the existing `Note` domain, e.g.
   `App/Modules/Note/API/V1/` exposing CRUD.
 - **Default to minimal APIs with typed results** (`TypedResults`, `MapGroup`,
@@ -54,6 +56,7 @@
   a template. Controllers optional/secondary.
 
 ### 3.3 Cross-cutting service concerns
+
 - **Typed, validated config**: `App/Config/settings.yaml` (+ landscape
   overrides), typed options, validate-on-start.
 - **Error pipeline**: `App/Error/` domain problems + `IExceptionHandler` +
@@ -63,16 +66,19 @@
 - **Validation**: FluentValidation wired via endpoint filters.
 
 ### 3.4 Observability
+
 - OpenTelemetry via `AddOpenTelemetry()` — traces + metrics + logs with ASP.NET/
   HTTP/runtime auto-instrumentation and an OTLP exporter.
 
 ### 3.5 Testing
+
 - Add `Microsoft.AspNetCore.Mvc.Testing` to `IntTest`; add a
   **`WebApplicationFactory`-based endpoint test** alongside base's existing
   Testcontainers Redis integration test.
 - Keep unit tests for domain/mappers/validators.
 
 ### 3.6 Container image
+
 - Replace base's placeholder `infra/Dockerfile` with a **real multi-stage image**:
   `dotnet sdk` build → `aspnet` runtime publish of `App.dll`, non-root,
   cross-arch (`$TARGETARCH`), `EXPOSE 8080`. Keep base's `image_name` wiring and
@@ -83,6 +89,7 @@
   **only if** persistence/migrations are included — see §4 note.
 
 ### 3.7 Deploy — Helm (the main net-new delivery piece)
+
 - Mirror how bun-cli added deploy over bun-base, but with a **real chart**:
   - `infra/root_chart/` with Deployment, Service, liveness/readiness probes,
     HPA, and configmap-mounted settings (+ per-landscape values).
@@ -92,6 +99,7 @@
     (lint/template) and `cd.yaml` (publish on `v*.*.*`).
 
 ### 3.8 Docs
+
 - `docs/developer/dotnet-api-baseline.md` (parallel to bun's `bun-baseline.md`):
   new `pls` tasks, run modes, and the **promotion knobs** a downstream adapts
   (see §5).
@@ -145,5 +153,5 @@
 
 - Publishing as a NuGet library — that's `dotnet-lib`.
 - A full multi-module business domain, real auth provider, email/storage
-  integrations — the sample proves the *shape* with one module; these are
+  integrations — the sample proves the _shape_ with one module; these are
   documented extension points, not built out.
