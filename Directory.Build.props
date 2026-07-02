@@ -22,4 +22,12 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
+  <!-- Supply chain and CI reproducibility. Audit covers transitive packages;
+       with TreatWarningsAsErrors a newly disclosed CVE fails the build loudly. -->
+  <PropertyGroup>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
 </Project>

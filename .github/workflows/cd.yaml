@@ -3,7 +3,6 @@ on:
   push:
     tags:
       - v*.*.*
-      - v*.*.*
 jobs:
   placeholder:
     name: Placeholder CD
@@ -13,6 +12,9 @@ jobs:
         run: echo "Placeholder step ${{ github.ref_name }}"
   docker:
     name: Docker Image
+    permissions:
+      id-token: write
+      packages: write
     uses: ./.github/workflows/⚡reusable-docker.yaml
     secrets: inherit
     with:

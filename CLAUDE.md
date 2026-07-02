@@ -29,6 +29,10 @@ Only selected language-specific standards are generated. Do not link to missing 
 - [C# Testing](docs/developer/standard/testing/languages/csharp.md)
 - [C# Utilities](docs/developer/standard/utilities/languages/csharp.md)
 
+# .NET Baseline
+
+See [docs/developer/dotnet-baseline.md](docs/developer/dotnet-baseline.md) for .NET-specific commands, test modes, coverage, supply-chain gates, release flow, and template-maintenance knobs.
+
 # Base Template (diene.dotnet-base)
 
 This repo is the AtomiCloud **.NET 10 base template**. Everything above is the mandatory convention source — treat `docs/developer/standard/` as binding. When working here:
