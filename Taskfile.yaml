@@ -12,7 +12,19 @@ tasks:
   build:
     desc: Build the .NET solution (Release)
     cmds:
-      - dotnet build dotnet-base.slnx -c Release
+      - dotnet build ./*.slnx -c Release
+  run:
+    desc: 'Run the sample App in dev mode (args via --, needs `pls up`)'
+    cmds:
+      - dotnet run --project App/App.csproj -- {{.CLI_ARGS}}
+  up:
+    desc: Start all local dependencies, detached
+    cmds:
+      - docker run -d --rm --name dotnet-base-redis -p 6379:6379 redis:8-alpine
+  down:
+    desc: Stop all local dependencies
+    cmds:
+      - docker stop dotnet-base-redis 2>/dev/null || true
   lint:
     desc: Lints the whole code-base
     cmds:

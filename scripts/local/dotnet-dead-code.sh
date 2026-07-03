@@ -1,58 +1,48 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# JetBrains InspectCode dead-code analysis via dn-inspect, run on the project SDK (net10).
-# Runs both all-project and production-only passes.
+# JetBrains InspectCode (dn-inspect) dead-code passes: all projects, then production only.
 
 RULE_FILTER="${DEAD_CODE_RULE_FILTER:-Unused|NeverInstantiated|NeverUsed|NotAccessed|NeverSubscribed|UnassignedField}"
 ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+SOLUTION="$(find "${ROOT}" -maxdepth 1 -name '*.slnx' 2>/dev/null | head -1)"
+SUMMARY_AWK='/^File[[:space:]]+Line[[:space:]]+Rule[[:space:]]+Message/{p=1} p{print} p&&/Total:/{f=1;exit} END{exit f?0:1}'
 
-print_summary() {
-  local log_file="$1"
-
-  awk '
-    /^File[[:space:]]+Line[[:space:]]+Rule[[:space:]]+Message/ { printing = 1 }
-    printing { print }
-    printing && /Total:/ { found = 1; exit }
-    END { exit found ? 0 : 1 }
-  ' "${log_file}" && return
-
-  echo "No issue summary was found; last 80 log lines:"
-  tail -80 "${log_file}"
-}
-
-run_inspection() {
-  local label="$1"
-  shift
-
-  local log_file
-  log_file="$(mktemp -t dotnet-dead-code.XXXXXX.log)"
-
-  echo "🔍 ${label}"
-  if dn-inspect "$@" --filter "${RULE_FILTER}" >"${log_file}" 2>&1; then
-    echo "✅ ${label}: no issues found"
-    rm -f "${log_file}"
-    return 0
-  fi
-
-  echo "❌ ${label}: issues found"
-  print_summary "${log_file}"
-  rm -f "${log_file}"
-  return 1
-}
+[ -z "${SOLUTION}" ] && echo "❌ No .slnx solution found in ${ROOT}" >&2 && exit 1
 
 echo "🔧 Restoring .NET tools (jb)..."
 dotnet tool restore >/dev/null
 
 failed=0
 
-if ! run_inspection "Dead-code inspection: all projects" "${ROOT}/dotnet-base.slnx"; then
+echo "🔍 Dead-code inspection: all projects"
+log="$(mktemp -t dotnet-dead-code.XXXXXX.log)"
+if dn-inspect "${SOLUTION}" --filter "${RULE_FILTER}" >"${log}" 2>&1; then
+  echo "✅ all projects: no issues found"
+else
   failed=1
+  echo "❌ all projects: issues found"
+  if ! awk "${SUMMARY_AWK}" "${log}"; then
+    echo "No issue summary was found; last 80 log lines:"
+    tail -80 "${log}"
+  fi
 fi
+rm -f "${log}"
 
-if ! run_inspection "Dead-code inspection: production projects" \
-  --projects "${ROOT}/App/App.csproj" "${ROOT}/Lib/Lib.csproj"; then
+echo "🔍 Dead-code inspection: production projects"
+log="$(mktemp -t dotnet-dead-code.XXXXXX.log)"
+if dn-inspect --projects "${ROOT}/App/App.csproj" "${ROOT}/Lib/Lib.csproj" --filter "${RULE_FILTER}" >"${log}" 2>&1; then
+  echo "✅ production projects: no issues found"
+else
   failed=1
+  echo "❌ production projects: issues found"
+  if ! awk "${SUMMARY_AWK}" "${log}"; then
+    echo "No issue summary was found; last 80 log lines:"
+    tail -80 "${log}"
+  fi
 fi
+rm -f "${log}"
 
-exit "${failed}"
+[ "${failed}" -ne 0 ] && exit 1
+
+echo "✅ Dead-code inspection complete"

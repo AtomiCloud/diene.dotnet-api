@@ -18,8 +18,10 @@ in `docs/developer/standard/`.
 New .NET entries:
 
 - `pls build`
-- `pls test:unit`, `pls test:unit:coverage`, `pls test:unit:dev`
-- `pls test:int`, `pls test:int:coverage`, `pls test:int:dev`
+- `pls run -- <args>` (dev-mode App run; local dependencies via `pls up` / `pls down`)
+- `pls test`, `pls test:unit`, `pls test:int`
+- `pls test:coverage`, `pls test:unit:coverage`, `pls test:int:coverage`
+- `pls test:watch` (fast unit suite)
 - `pls dead-code`
 - `pls docker:prep`
 
@@ -83,8 +85,8 @@ packages: write }` (namespace OIDC + ghcr); the repo setting
 promotion. Keep CyanPrint-managed/shared scaffold edits additive. Settings a
 downstream template is expected to adapt:
 
-- **Docker image name** — `image_name` in `ci.yaml`/`cd.yaml`,
-  `tasks/Taskfile.docker.yaml`, and `scripts/ci/docker-prep.sh`.
+- **Docker image name** — `image_name` in `ci.yaml`/`cd.yaml` and
+  `tasks/Taskfile.docker.yaml`.
 - **Coverage thresholds** — `.config/dotnet-base.test.yaml` minimums and
   `codecov.yml` flags.
 - **Docker runtime** — `infra/Dockerfile` is replaced wholesale downstream.

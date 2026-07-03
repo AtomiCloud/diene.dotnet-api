@@ -26,7 +26,7 @@ jobs:
       - uses: AtomiCloud/actions.cache-nuget@v1
       - uses: AtomiCloud/actions.setup-docker@v2
       - name: Run ${{ inputs.mode }} coverage
-        run: nix develop .#ci -c ./scripts/ci/coverage.sh ${{ inputs.mode }}
+        run: nix develop .#ci -c ./scripts/ci/test.sh ${{ inputs.mode }}
       - name: Upload ${{ inputs.mode }} test results
         if: always()
         uses: actions/upload-artifact@v4

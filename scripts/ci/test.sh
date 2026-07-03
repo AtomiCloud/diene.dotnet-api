@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# CI entry point: run unit and integration tests (normal mode). Reuses the same local
-# engine the Taskfile uses, so local and CI behaviour cannot drift.
+# CI entry point: one suite with coverage + threshold. Usage: test.sh <unit|int>
 
-echo "🧪 Running unit tests..."
-./scripts/local/dotnet-test.sh unit
+MODE="${1:-}"
+[ "${MODE}" != "unit" ] && [ "${MODE}" != "int" ] && echo "❌ Usage: test.sh <unit|int>" >&2 && exit 1
 
-echo "🧪 Running integration tests..."
-./scripts/local/dotnet-test.sh int
+./scripts/ci/setup.sh
 
-echo "✅ Tests complete"
+echo "🧪 Running ${MODE} tests with coverage..."
+./scripts/local/dotnet-test.sh "${MODE}" --coverage
+
+echo "✅ ${MODE} tests complete"

@@ -25,15 +25,18 @@ Once allowed, direnv automatically loads the development environment whenever yo
 
 [`pls`](docs/developer/standard/taskfile.md) (Taskfile) is the entry point for every local task — the same gates CI runs (CI invokes the matching `scripts/ci/*` scripts under `nix develop .#ci`):
 
-| Command                  | What it does                                                        |
-| ------------------------ | ------------------------------------------------------------------- |
-| `pls setup`              | Set up the repo (Nix env + secrets)                                 |
-| `pls build`              | Build the .NET solution (Release)                                   |
-| `pls lint`               | Run all pre-commit hooks across the code-base                       |
-| `pls test:unit`          | Run unit tests (`:int` for integration; `:dev` variants watch)      |
-| `pls test:unit:coverage` | Run tests with coverage and enforce the threshold (`:int:coverage`) |
-| `pls dead-code`          | Inspect for dead code                                               |
-| `pls docker:prep`        | Validate the base Docker build context (build smoke, no push)       |
+| Command                  | What it does                                                          |
+| ------------------------ | --------------------------------------------------------------------- |
+| `pls setup`              | Set up the repo (Nix env + secrets)                                   |
+| `pls build`              | Build the .NET solution (Release)                                     |
+| `pls run -- <args>`      | Run the sample App in dev mode (needs `pls up`)                       |
+| `pls up` / `pls down`    | Start / stop all local dependencies, detached                         |
+| `pls lint`               | Run all pre-commit hooks across the code-base                         |
+| `pls test`               | Run unit + integration tests (`:unit` / `:int` for one suite)         |
+| `pls test:coverage`      | Run tests with coverage + thresholds (`:unit:coverage` for one suite) |
+| `pls test:watch`         | Watch the fast unit suite                                             |
+| `pls dead-code`          | Inspect for dead code                                                 |
+| `pls docker:prep`        | Validate the base Docker build context (build smoke, no push)         |
 
 Run `pls --list` to see every available task.
 

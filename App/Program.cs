@@ -4,12 +4,7 @@ using StackExchange.Redis;
 
 namespace AtomiCloud.DotnetBase.App;
 
-/// <summary>
-/// Composition root for the base sample. It wires the concrete adapters behind their
-/// domain interfaces and exercises one note round trip. A production service would
-/// register these with a DI container; the sample keeps the graph explicit so the
-/// wiring stays obvious.
-/// </summary>
+/// <summary>Composition root: explicit wiring of domain interfaces to concrete adapters.</summary>
 public static class Program
 {
     public static async Task Main()
@@ -17,6 +12,7 @@ public static class Program
         var connectionString = Environment.GetEnvironmentVariable("REDIS_CONNECTION");
         if (string.IsNullOrWhiteSpace(connectionString)) connectionString = "localhost:6379";
 
+        // ── Domain wiring (illustrative sample) — replace this block with your domain ──
         INoteSummariser summariser = new NoteSummariser();
         await using var redis = await ConnectionMultiplexer.ConnectAsync(connectionString);
         INoteRepository notes = new RedisNoteRepository(redis);
@@ -31,5 +27,6 @@ public static class Program
         Console.WriteLine(found is null
             ? $"Note {saved.Id} could not be read back."
             : summariser.Summarise(found.Record, 80));
+        // ── End domain wiring ──
     }
 }
