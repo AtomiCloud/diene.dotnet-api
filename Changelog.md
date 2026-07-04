@@ -1,3 +1,11 @@
+## [1.1.0](https://github.com/AtomiCloud/diene.dotnet-base/compare/v1.0.1...v1.1.0) (2026-07-03)
+
+
+### 📜 Documentation 📜
+
+* add dotnet baseline doc ([c434ae3](https://github.com/AtomiCloud/diene.dotnet-base/commit/c434ae30503b9dd0da5503f810a27cce6e1174b6))
+* align docs with harmonized task surface ([711fe6b](https://github.com/AtomiCloud/diene.dotnet-base/commit/711fe6b4cef9f540d9e1c357106c3743664b082e))
+
 ## [1.0.1](https://github.com/AtomiCloud/diene.dotnet-base/compare/v1.0.0...v1.0.1) (2026-07-01)
 
 
