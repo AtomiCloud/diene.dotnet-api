@@ -23,7 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: AtomiCloud/actions.setup-nix@v3
-      - uses: AtomiCloud/actions.cache-nuget@v1
+      - uses: AtomiCloud/actions.cache-nuget@v2
       - uses: AtomiCloud/actions.setup-docker@v2
       - name: Run ${{ inputs.mode }} coverage
         run: nix develop .#ci -c ./scripts/ci/test.sh ${{ inputs.mode }}
